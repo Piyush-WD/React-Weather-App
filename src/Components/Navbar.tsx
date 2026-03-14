@@ -56,7 +56,18 @@ const Navbar: React.FC<NavbarProps> = ({ user }) => {
             </Link>
           </>
         ) : (
-          <button onClick={handleLogout}>Logout</button>
+          <button
+            onClick={handleLogout}
+            style={{
+              background: "transparent",
+              color: "white",
+              border: "none",
+              cursor: "pointer",
+              fontSize: "16px",
+            }}
+          >
+            Logout
+          </button>
         )}
       </div>
     </nav>
