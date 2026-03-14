@@ -50,6 +50,3 @@ A modern **React + TypeScript weather application** that allows users to search 
 * OpenWeather API
 
 ---
-
-Computer Science Engineering Student
-Aspiring **Full Stack Developer**
