@@ -94,56 +94,116 @@
 
 // --------------------------------------------------
 
-import React, { useState } from "react";
+// import React, { useState } from "react";
 
-const icons: Record<string, string> = {
-  Clouds: "src/assets/cloud.png",
-  Clear: "src/assets/cloudy.png",
-  Rain: "src/assets/rainy.png",
-  Snow: "src/assets/snowflake.png",
-  Mist: "src/assets/mist.png",
-  Sunny: "src/assets/contrast.png",
-};
+// const icons: Record<string, string> = {
+//   Clouds: "src/assets/cloud.png",
+//   Clear: "src/assets/cloudy.png",
+//   Rain: "src/assets/rainy.png",
+//   Snow: "src/assets/snowflake.png",
+//   Mist: "src/assets/mist.png",
+//   Sunny: "src/assets/contrast.png",
+// };
 
-const WeatherApp: React.FC = () => {
-  const [city, setCity] = useState("");
-  const [weather, setWeather] = useState<any>(null);
+// const WeatherApp: React.FC = () => {
+//   const [city, setCity] = useState("");
+//   const [weather, setWeather] = useState<any>(null);
 
-  const getWeather = async () => {
-    const res = await fetch(
-      `https://api.openweathermap.org/data/2.5/weather?q=${city}&appid=c223b2098cd1e64f7ee38c83a5eb8117&units=metric`
-    );
-    const data = await res.json();
-    setWeather(data);
-    console.log(JSON);
-  };
+//   const getWeather = async () => {
+//     const res = await fetch(
+//       `https://api.openweathermap.org/data/2.5/weather?q=${city}&appid=c223b2098cd1e64f7ee38c83a5eb8117&units=metric`,
+//     );
+//     const data = await res.json();
+//     setWeather(data);
+//     console.log(data);
+//   };
+
+//   return (
+//     <div>
+//       {/* Navbar */}
+//       <nav
+//         style={{
+//           backgroundColor: "#1e293b",
+//           color: "white",
+//           padding: "15px",
+//           fontSize: "20px",
+//           fontWeight: "bold",
+//           textAlign: "center",
+//         }}
+//       >
+//         Weather App
+//       </nav>
+
+//       {/* Main Content */}
+//       <div style={{ textAlign: "center", marginTop: "50px" }}>
+//         <input
+//           type="text"
+//           placeholder="Enter city"
+//           value={city}
+//           onChange={(e) => setCity(e.target.value)}
+//           style={{ padding: "8px", marginRight: "10px" }}
+//         />
+
+//         <button onClick={getWeather} style={{ padding: "8px 15px" }}>
+//           Check
+//         </button>
+
+//         {weather && weather.main && (
+//           <div style={{ marginTop: "20px" }}>
+//             <h2>{weather.name}</h2>
+//             <p>Temp: {weather.main.temp}°C</p>
+//             <p>Condition: {weather.weather[0].main}</p>
+
+//             {weather.weather[0].main && (
+//               <img
+//                 src={icons[weather.weather[0].main]}
+//                 style={{ height: 200 }}
+//               />
+//             )}
+//           </div>
+//         )}
+//       </div>
+//     </div>
+//   );
+// };
+
+// export default WeatherApp;
+
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import Navbar from "./Components/Navbar";
+import Signup from "./Components/Signup";
+import Signin from "./Components/Signin";
+import WeatherApp from "./WeatherApp";
+
+import { useEffect, useState } from "react";
+import { onAuthStateChanged } from "firebase/auth";
+import { auth } from "./firebase/firebaseConfig";
+
+function App() {
+  const [user, setUser] = useState<any>(null);
+
+  useEffect(() => {
+    const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
+      setUser(currentUser);
+      console.log("Logged user:", currentUser);
+    });
+
+    return () => unsubscribe();
+  }, []);
 
   return (
-    <div style={{ textAlign: "center", marginTop: "50px" }}>
-      <h1>Weather App</h1>
-      <input
-        type="text"
-        placeholder="Enter city"
-        value={city}
-        onChange={(e) => setCity(e.target.value)}
-      />
-      <button onClick={getWeather}>Check</button>
-
-      {weather && weather.main && (
-        <div style={{ marginTop: "20px" }}>
-          <h2>{weather.name}</h2>
-          <p>Temp: {weather.main.temp}°C</p>
-          <p>Condition: {weather.weather[0].main}</p>
-          {weather.weather[0].main && (
-            <img src={icons[weather.weather[0].main]} style={{ height: 200 }} />
-          )}
-        </div>
-      )}
-    </div>
+    <Router>
+      <Navbar user={user} />
+      <Routes>
+        <Route path="/" element={<WeatherApp user={user} />} />
+        <Route path="/signup" element={<Signup />} />
+        <Route path="/signin" element={<Signin />} />
+      </Routes>
+    </Router>
   );
-};
+}
 
-export default WeatherApp;
+export default App;
 
 // --------------------------------------------------
 
